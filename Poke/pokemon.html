@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<head>
+  <title>Test</title>
+</head>
+<style type="text/css">
+  body {
+    font-size: 100%;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    width: 960px;
+    /* position: absolute; */
+    display: block;
+    margin: 0 auto;
+    top: 50px;
+    /* left: 25px; */
+    width: 500px;
+    height: 500px;
+    background-attachment: fixed;
+    background-position: center;
+  }
+  #refresh-btn {
+    float: right;
+
+    font-size: 24px;
+    border-radius: 0;
+  }
+</style>
+<!-- <body bgcolor="#000000"></body> -->
+<body background="bg4.jpg"></body>
+<body>
+  <button type="button" id="refresh-btn">Reset</button>
+  <div id="donut-charts"></div>
+
+  <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
+  <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <script>
+    $(function() {
+      var donutData = genData();
+
+      var donuts = new DonutCharts();
+      donuts.create(donutData);
+
+      $("#refresh-btn").on("click", function refresh() {
+        donuts.update(genData);
+      });
+    });
+
+    function DonutCharts() {
+      var charts = d3.select("#donut-charts");
+
+      var chart_m, chart_r;
+      //color = d3.scale.category20();
+
+      var color = d3.scale
+        .ordinal()
+        .domain([
+          "Normal",
+          "Fighting",
+          "Flying",
+          "Poison",
+          "Ground",
+          "Rock",
+          "Bug",
+          "Ghost",
+          "Steel",
+          "Fire",
+          "Water",
+          "Grass",
+          "Electric",
+          "Psychic",
+          "Ice",
+          "Dragon",
+          "Dark",
+          "Fairy"
+        ])
+        .range([
+          "#6c6d4e",
+          "#c02f28",
+          "#a890f0",
+          "#a040a0",
+          "#dfc068",
+          "#b8a038",
+          "#a8b81e",
+          "#705898",
+          "#b8b8d0",
+          "#f08030",
+          "#6890f0",
+          "#78c850",
+          "#f8d02f",
+          "#f75887",
+          "#98d8d8",
+          "#7038f8",
+          "#705847",
+          "#ee99ac"
+        ]);
+
+      var subColor = d3.scale
+        .ordinal()
+        .domain([
+          "normal|dark",
+          "normal|dragon",
+          "normal|eletric",
+          "normal|fairy",
+          "normal|fighting",
+          "normal|fire",
+          "normal|flying",
+          "normal|grass",
+          "normal|ground",
+          "normal",
+          "normal|psychic",
+          "normal|water"
+        ])
+        .range([
+          "#705847",
+          "#f8d02f",
+          "#ee99ac",
+          "#c02f28",
+          "#f08030",
+          "#a890f0",
+          "#78c850",
+          "#b8a038",
+          "#6c6d4e",
+          "#f75887",
+          "#6890f0"
+        ]);
+
+      var getCatNames = function(dataset) {
+        var catNames = new Array();
+
+        for (var i = 0; i < dataset[0].data.length; i++) {
+          catNames.push(dataset[0].data[i].cat);
+        }
+
+        return catNames;
+      };
+
+      var createLegend = function(catNames) {
+        var legends = charts
+          .select(".legend")
+          .selectAll("g")
+          .data(catNames)
+          .enter()
+          .append("g")
+          .attr("transform", function(d, i) {
+            return "translate(" + (i * 150 + 50) + ", 10)";
+          });
+
+        legends
+          .append("circle")
+          .attr("class", "legend-icon")
+          .attr("r", 6)
+          .style("fill", function(d, i) {
+            return color(i);
+          });
+
+        legends
+          .append("text")
+          .attr("dx", "1em")
+          .attr("dy", ".3em")
+          .text(function(d) {
+            return d;
+          });
+      };
+
+      var createCenter = function(pie) {
+        var eventObj = {
+          mouseover: function(d, i) {
+            d3.select(this)
+              .transition()
+              .attr("r", chart_r * 0.65);
+          },
+
+          mouseout: function(d, i) {
+            d3.select(this)
+              .transition()
+              .duration(500)
+              .ease("bounce")
+              .attr("r", chart_r * 0.6);
+          },
+
+          click: function(d, i) {
+            var paths = charts.selectAll(".clicked");
+            pathAnim(paths, 0);
+            paths.classed("clicked", false);
+            resetAllCenterText();
+          }
+        };
+
+        var donuts = d3.selectAll(".donut");
+
+        // The circle displaying total data.
+        donuts
+          .append("svg:circle")
+          .attr("r", chart_r * 0.6)
+          .style("fill", "#E7E7E7")
+          .on(eventObj);
+
+        donuts
+          .append("text")
+          .attr("class", "center-txt type")
+          .attr("y", chart_r * -0.16)
+          .attr("text-anchor", "middle")
+          .style("font-weight", "bold")
+          .text(function(d, i) {
+            return d.type;
+          });
+        donuts
+          .append("text")
+          .attr("class", "center-txt value")
+          .attr("text-anchor", "middle");
+        donuts
+          .append("text")
+          .attr("class", "center-txt percentage")
+          .attr("y", chart_r * 0.16)
+          .attr("text-anchor", "middle")
+          .style("fill", "#A2A2A2");
+      };
+
+      var setCenterText = function(thisDonut) {
+        var sum = d3.sum(thisDonut.selectAll(".clicked").data(), function(d) {
+          return d.data.val;
+        });
+
+        thisDonut.select(".value").text(function(d) {
+          // return sum ? sum.toFixed(1) + d.unit : d.total.toFixed(1) + d.unit;
+          return "Select a color";
+        });
+        thisDonut.select(".percentage").text(function(d) {
+          //  return sum ? ((sum / d.total) * 100).toFixed(2) + "%" : ""; //Original
+          return sum ? ((sum / 910) * 100).toFixed(2) + "%" : "";
+        });
+      };
+
+      var resetAllCenterText = function() {
+        charts.selectAll(".value").text(function(d) {
+          return d.total + d.unit + " Total";
+          return "Select a color";
+        });
+        charts.selectAll(".percentage").text("");
+      };
+
+      var pathAnim = function(path, dir) {
+        switch (dir) {
+          case 0:
+            path
+              .transition()
+              .duration(500)
+              .ease("bounce")
+              .attr(
+                "d",
+                d3.svg
+                  .arc()
+                  .innerRadius(chart_r * 0.7)
+                  .outerRadius(chart_r)
+              );
+            break;
+
+          case 1:
+            path.transition().attr(
+              "d",
+              d3.svg
+                .arc()
+                .innerRadius(chart_r * 0.7)
+                .outerRadius(chart_r * 1.08)
+            );
+
+            break;
+        }
+      };
+
+      var updateDonut = function() {
+        //For hover over portion of donut
+        var eventObj = {
+          mouseover: function(d, i, j) {
+            pathAnim(d3.select(this), 1);
+
+            var thisDonut = charts.select(".type" + j);
+            thisDonut.select(".value").text(function(donut_d) {
+              return d.data.val + donut_d.unit;
+            });
+            thisDonut.select(".percentage").text(function(donut_d) {
+              return (
+                d.data.cat +
+                " " +
+                ((d.data.val / donut_d.total) * 100).toFixed(2) +
+                "%"
+              );
+            });
+          },
+
+          mouseout: function(d, i, j) {
+            var thisPath = d3.select(this);
+            if (!thisPath.classed("clicked")) {
+              pathAnim(thisPath, 0);
+            }
+            var thisDonut = charts.select(".type" + j);
+            setCenterText(thisDonut);
+          },
+
+          //Important part
+
+          click: function(d, i, j) {
+            console.log(d.data.cat);
+            if (d.data.cat == "Normal") {
+              charts.selectAll(".donut").data(genNormal());
+            }
+            if (d.data.cat == "Fighting") {
+              charts.selectAll(".donut").data(genFighting());
+            }
+            if (d.data.cat == "Flying") {
+              charts.selectAll(".donut").data(genFlying());
+            }
+            if (d.data.cat == "Poison") {
+              charts.selectAll(".donut").data(genPoison());
+            }
+            if (d.data.cat == "Ground") {
+              charts.selectAll(".donut").data(genGround());
+            }
+            if (d.data.cat == "Rock") {
+              charts.selectAll(".donut").data(genRock());
+            }
+            if (d.data.cat == "Bug") {
+              charts.selectAll(".donut").data(genBug());
+            }
+            if (d.data.cat == "Ghost") {
+              charts.selectAll(".donut").data(genGhost());
+            }
+            if (d.data.cat == "Steel") {
+              charts.selectAll(".donut").data(genSteel());
+            }
+            if (d.data.cat == "Fire") {
+              charts.selectAll(".donut").data(genFire());
+            }
+            if (d.data.cat == "Water") {
+              charts.selectAll(".donut").data(genWater());
+            }
+            if (d.data.cat == "Grass") {
+              charts.selectAll(".donut").data(genGrass());
+            }
+
+            if (d.data.cat == "Electric") {
+              charts.selectAll(".donut").data(genElectric());
+            }
+            if (d.data.cat == "Psychic") {
+              charts.selectAll(".donut").data(genPsychic());
+            }
+            if (d.data.cat == "Ice") {
+              charts.selectAll(".donut").data(genIce());
+            }
+
+            if (d.data.cat == "Dragon") {
+              charts.selectAll(".donut").data(genDragon());
+            }
+            if (d.data.cat == "Dark") {
+              charts.selectAll(".donut").data(genDark());
+            }
+            if (d.data.cat == "Fairy") {
+              charts.selectAll(".donut").data(genFairy());
+            }
+
+            updateDonut();
+          }
+          //Important part
+        };
+
+        var pie = d3.layout
+          .pie()
+          .sort(null)
+          .value(function(d) {
+            return d.val;
+          });
+
+        var arc = d3.svg
+          .arc()
+          .innerRadius(chart_r * 0.7)
+          .outerRadius(function() {
+            return d3.select(this).classed("clicked")
+              ? chart_r * 1.08
+              : chart_r;
+          });
+
+        // Start joining data with paths
+        var paths = charts
+          .selectAll(".donut")
+          .selectAll("path")
+          .data(function(d, i) {
+            return pie(d.data);
+          });
+
+        paths
+          .transition()
+          .duration(1000)
+          .attr("d", arc);
+
+        paths
+          .enter()
+          .append("svg:path")
+          .attr("d", arc)
+          .style("fill", function(d, i) {
+            return color(i);
+          })
+          .style("stroke", "#FFFFFF")
+          .on(eventObj);
+
+        paths.exit().remove();
+
+        resetAllCenterText();
+      };
+
+      this.create = function(dataset) {
+        var $charts = $("#donut-charts");
+        chart_m = ($charts.innerWidth() / dataset.length / 2) * 0.14;
+        chart_r = ($charts.innerWidth() / dataset.length / 2) * 0.85;
+
+        charts
+          .append("svg")
+          .attr("class", "legend")
+          .attr("width", "100%")
+          .attr("height", 50)
+          .attr("transform", "translate(0, -100)");
+
+        var donut = charts
+          .selectAll(".donut")
+          .data(dataset)
+          .enter()
+          .append("svg:svg")
+          .attr("width", (chart_r + chart_m) * 2)
+          .attr("height", (chart_r + chart_m) * 2)
+          .append("svg:g")
+          .attr("class", function(d, i) {
+            return "donut type" + i;
+          })
+          .attr(
+            "transform",
+            "translate(" + (chart_r + chart_m) + "," + (chart_r + chart_m) + ")"
+          );
+
+        createLegend(getCatNames(dataset));
+        createCenter();
+
+        updateDonut();
+      };
+
+      this.update = function(dataset) {
+        // Assume no new categ of data enter
+        var donut = charts.selectAll(".donut").data(dataset);
+
+        updateDonut();
+      };
+    }
+
+    /*
+     * Returns a json-like object.
+     */
+    function genData() {
+      var type = ["Pokemon Types"];
+      var unit = [""];
+      var cat = [
+        "Normal",
+        "Fighting",
+        "Flying",
+        "Poison",
+        "Ground",
+        "Rock",
+        "Bug",
+        "Ghost",
+        "Steel",
+        "Fire",
+        "Water",
+        "Grass",
+        "Electric",
+        "Psychic",
+        "Ice",
+        "Dragon",
+        "Dark",
+        "Fairy"
+      ];
+
+      var vals = [
+        118,
+        59,
+        102,
+        70,
+        69,
+        68,
+        84,
+        51,
+        58,
+        72,
+        141,
+        106,
+        62,
+        90,
+        44,
+        55,
+        60,
+        55
+      ];
+
+      var dataset = new Array();
+
+      for (var i = 0; i < type.length; i++) {
+        var data = new Array();
+        var total = 0;
+
+        for (var j = 0; j < cat.length; j++) {
+          var value = vals[j];
+          total += value;
+          data.push({
+            cat: cat[j],
+            val: value
+          });
+        }
+
+        dataset.push({
+          type: type[i],
+          unit: unit[i],
+          data: data,
+          total: total
+        });
+      }
+      return dataset;
+    }
+
+    function genNormal() {
+      var type = ["Normal Types"];
+      var unit = [""];
+      var cat = [
+        "normal",
+        "normal|fighting",
+        "normal|flying",
+        "normal|poison",
+        "normal|ground",
+        "normal|rock",
+        "normal|bug",
+        "normal|ghost",
+        "normal|steel",
+        "normal|fire",
+
+        "normal|water",
+        "normal|grass",
+
+        "normal|electric",
+        "normal|psychic",
+        "normal|ice",
+        "normal|dragon",
+        "normal|dark",
+
+        "normal|fairy"
+      ];
+
+      var vals = [69, 2, 26, 0, 1, 0, 0, 0, 0, 2, 2, 2, 4, 0, 1, 2, 4, 4];
+
+      var dataset = new Array();
+
+      for (var i = 0; i < type.length; i++) {
+        var data = new Array();
+        var total = 0;
+
+        for (var j = 0; j < cat.length; j++) {
+          var value = vals[j];
+          total += value;
+          data.push({
+            cat: cat[j],
+            val: value
+          });
+        }
+
+        dataset.push({
+          type: type[i],
+          unit: unit[i],
+          data: data,
+          total: total
+        });
+      }
+      return dataset;
+    }
+
+    function genFighting() {
+      var type = ["Fighting Types"];
+      var unit = [""];
+      var cat = [
+        "fighting|normal",
+        "fighting",
+        "fighting|flying",
+        "fighting|poison",
+        "fighting|ground",
+        "fighting|rock",
+        "fighting|bug",
+        "fighting|ghost",
+        "fighting|steel",
+        "fighting|fire",
+        "fighting|water",
+        "fighting|grass",
+        "fighting|electric",
+        "fighting|psychic",
+        "fighting|ice",
+        "fighting|dragon",
+        "fighting|dark",
+        "fighting|fairy"
+      ];
+
+      var vals = [2, 27, 1, 2, 0, 1, 3, 1, 2, 6, 2, 3, 3, 3, 1, 2, 3, 0];
+
+      var dataset = new Array();
+
+      for (var i = 0; i < type.length; i++) {
+        var data = new Array();
+        var total = 0;
+
+        for (var j = 0; j < cat.length; j++) {
+          var value = vals[j];
+          total += value;
+          data.push({
+            cat: cat[j],
+            val: value
+          });
+        }
+
+        dataset.push({
+          type: type[i],
+          unit: unit[i],
+          data: data,
+          total: total
+        });
+      }
+      return dataset;
+    }
+
+    function genFlying() {
+      var type = ["Flying Types"];
+      var unit = [""];
+      var cat = [
+        "flying|normal",
+        "flying|fighting",
+        "flying",
+        "flying|poison",
+        "flying|ground",
+        "flying|rock",
+        "flying|bug",
+        "flying|ghost",
+        "flying|steel",
+        "flying|fire",
+        "flying|water",
+        "flying|grass",
+        "flying|electric",
+        "flying|psychic",
+        "flying|ice",
+        "flying|dragon",
+        "flying|dark",
+        "flying|fairy"
+      ];
+
+      var vals = [26, 1, 3, 3, 3, 4, 13, 2, 3, 6, 8, 6, 3, 6, 2, 6, 5, 2];
+
+      var dataset = new Array();
+
+      for (var i = 0; i < type.length; i++) {
+        var data = new Array();
+        var total = 0;
+
+        for (var j = 0; j < cat.length; j++) {
+          var value = vals[j];
+          total += value;
+          data.push({
+            cat: cat[j],
+            val: value
+          });
+        }
+
+        dataset.push({
+          type: type[i],
+          unit: unit[i],
+          data: data,
+          total: total
+        });
+      }
+      return dataset;
+    }
+    function genPoison() {
+      var type = ["Poison Types"];
+      var unit = [""];
+      var cat = [
+        "poison|normal",
+        "poison|fighting",
+        "poison|flying",
+        "poison",
+        "poison|ground",
+        "poison|rock",
+        "poison|bug",
+        "poison|ghost",
+        "poison|steel",
+        "poison|fire",
+        "poison|water",
+        "poison|grass",
+        "poison|electric",
+        "poison|psychic",
+        "poison|ice",
+        "poison|dragon",
+        "poison|dark",
+        "poison|fairy"
+      ];
+      var vals = [0, 2, 3, 16, 2, 0, 12, 0, 0, 2, 6, 14, 2, 0, 0, 2, 5, 0];
+
+      var dataset = new Array();
+
+      for (var i = 0; i < type.length; i++) {
+        var data = new Array();
+        var total = 0;
+
+        for (var j = 0; j < cat.length; j++) {
+          var value = vals[j];
+          total += value;
+          data.push({
+            cat: cat[j],
+            val: value
+          });
+        }
+
+        dataset.push({
+          type: type[i],
+          unit: unit[i],
+          data: data,
+          total: total
+        });
+      }
+      return dataset;
+    }
+    function genGround() {
+      var type = ["Ground Types"];
+      var unit = [""];
+      var cat = [
+        "ground|normal",
+        "ground|fighting",
+        "ground|flying",
+        "ground|poison",
+        "ground",
+        "ground|rock",
+        "ground|bug",
+        "ground|ghost",
+        "ground|steel",
+        "ground|fire",
+        "ground|water",
+        "ground|grass",
+        "ground|electric",
+        "ground|psychic",
+        "ground|ice",
+        "ground|dragon",
+        "ground|dark",
+        "ground|fairy"
+      ];
+      var vals = [1, 0, 3, 2, 17, 9, 1, 5, 4, 2, 9, 1, 1, 2, 3, 6, 3, 0];
+
+      var dataset = new Array();
+
+      for (var i = 0; i < type.length; i++) {
+        var data = new Array();
+        var total = 0;
+
+        for (var j = 0; j < cat.length; j++) {
+          var value = vals[j];
+          total += value;
+          data.push({
+            cat: cat[j],
+            val: value
+          });
+        }
+
+        dataset.push({
+          type: type[i],
+          unit: unit[i],
+          data: data,
+          total: total
+        });
+      }
+      return dataset;
+    }
+    function genRock() {
+      var type = ["Rock Types"];
+      var unit = [""];
+      var cat = [
+        "rock|normal",
+        "rock|fighting",
+        "rock|flying",
+        "rock|poison",
+        "rock|ground",
+        "rock",
+        "rock|bug",
+        "rock|ghost",
+        "rock|steel",
+        "rock|fire",
+        "rock|water",
+        "rock|grass",
+        "rock|electric",
+        "rock|psychic",
+        "rock|ice",
+        "rock|dragon",
+        "rock|dark",
+        "rock|fairy"
+      ];
+      var vals = [0, 1, 4, 1, 9, 13, 5, 0, 7, 3, 11, 2, 3, 2, 2, 2, 1, 2];
+
+      var dataset = new Array();
+
+      for (var i = 0; i < type.length; i++) {
+        var data = new Array();
+        var total = 0;
+
+        for (var j = 0; j < cat.length; j++) {
+          var value = vals[j];
+          total += value;
+          data.push({
+            cat: cat[j],
+            val: value
+          });
+        }
+
+        dataset.push({
+          type: type[i],
+          unit: unit[i],
+          data: data,
+          total: total
+        });
+      }
+      return dataset;
+    }
+
+    function genBug() {
+      var type = ["Bug Types"];
+      var unit = [""];
+      var cat = [
+        "bug|normal",
+        "bug|fighting",
+        "bug|flying",
+        "bug|poison",
+        "bug|ground",
+        "bug|rock",
+        "bug",
+        "bug|ghost",
+        "bug|steel",
+        "bug|fire",
+        "bug|water",
+        "bug|grass",
+        "bug|electric",
+        "bug|psychic",
+        "bug|ice",
+        "bug|dragon",
+        "bug|dark",
+        "bug|fairy"
+      ];
+      var vals = [0, 3, 13, 12, 1, 5, 19, 0, 5, 4, 5, 6, 4, 2, 2, 0, 0, 2];
+
+      var dataset = new Array();
+
+      for (var i = 0; i < type.length; i++) {
+        var data = new Array();
+        var total = 0;
+
+        for (var j = 0; j < cat.length; j++) {
+          var value = vals[j];
+          total += value;
+          data.push({
+            cat: cat[j],
+            val: value
+          });
+        }
+
+        dataset.push({
+          type: type[i],
+          unit: unit[i],
+          data: data,
+          total: total
+        });
+      }
+      return dataset;
+    }
+
+    function genGhost() {
+      var type = ["Ghost Types"];
+      var unit = [""];
+      var cat = [
+        "ghost|normal",
+        "ghost|fighting",
+        "ghost|flying",
+        "ghost|poison",
+        "ghost|ground",
+        "ghost|rock",
+        "ghost|bug",
+        "ghost",
+        "ghost|steel",
+        "ghost|fire",
+        "ghost|water",
+        "ghost|grass",
+        "ghost|electric",
+        "ghost|psychic",
+        "ghost|ice",
+        "ghost|dragon",
+        "ghost|dark",
+        "ghost|fairy"
+      ];
+      var vals = [0, 1, 2, 3, 5, 0, 1, 12, 3, 5, 2, 6, 1, 2, 1, 4, 2, 1];
+
+      var dataset = new Array();
+
+      for (var i = 0; i < type.length; i++) {
+        var data = new Array();
+        var total = 0;
+
+        for (var j = 0; j < cat.length; j++) {
+          var value = vals[j];
+          total += value;
+          data.push({
+            cat: cat[j],
+            val: value
+          });
+        }
+
+        dataset.push({
+          type: type[i],
+          unit: unit[i],
+          data: data,
+          total: total
+        });
+      }
+      return dataset;
+    }
+
+    function genSteel() {
+      var type = ["Steel Types"];
+      var unit = [""];
+      var cat = [
+        "steel|normal",
+        "steel|fighting",
+        "steel|flying",
+        "steel|poison",
+        "steel|ground",
+        "steel|rock",
+        "steel|bug",
+        "steel|ghost",
+        "steel",
+        "steel|fire",
+        "steel|water",
+        "steel|grass",
+        "steel|electric",
+        "steel|psychic",
+        "steel|ice",
+        "steel|dragon",
+        "steel|dark",
+        "steel|fairy"
+      ];
+      var vals = [0, 2, 3, 0, 4, 7, 5, 3, 9, 1, 1, 3, 4, 7, 2, 2, 2, 3];
+
+      var dataset = new Array();
+
+      for (var i = 0; i < type.length; i++) {
+        var data = new Array();
+        var total = 0;
+
+        for (var j = 0; j < cat.length; j++) {
+          var value = vals[j];
+          total += value;
+          data.push({
+            cat: cat[j],
+            val: value
+          });
+        }
+
+        dataset.push({
+          type: type[i],
+          unit: unit[i],
+          data: data,
+          total: total
+        });
+      }
+      return dataset;
+    }
+
+    function genFire() {
+      var type = ["Fire Types"];
+      var unit = [""];
+      var cat = [
+        "fire|normal",
+        "fire|fighting",
+        "fire|flying",
+        "fire|poison",
+        "fire|ground",
+        "fire|rock",
+        "fire|bug",
+        "fire|ghost",
+        "fire|steel",
+        "fire",
+        "fire|water",
+        "fire|grass",
+        "fire|electric",
+        "fire|psychic",
+        "fire|ice",
+        "fire|dragon",
+        "fire|dark",
+        "fire|fairy"
+      ];
+      var vals = [2, 6, 6, 2, 2, 3, 4, 5, 1, 33, 1, 0, 0, 2, 0, 2, 3, 0];
+
+      var dataset = new Array();
+
+      for (var i = 0; i < type.length; i++) {
+        var data = new Array();
+        var total = 0;
+
+        for (var j = 0; j < cat.length; j++) {
+          var value = vals[j];
+          total += value;
+          data.push({
+            cat: cat[j],
+            val: value
+          });
+        }
+
+        dataset.push({
+          type: type[i],
+          unit: unit[i],
+          data: data,
+          total: total
+        });
+      }
+      return dataset;
+    }
+
+    function genWater() {
+      var type = ["Water Types"];
+      var unit = [""];
+      var cat = [
+        "water|normal",
+        "water|fighting",
+        "water|flying",
+        "water|poison",
+        "water|ground",
+        "water|rock",
+        "water|bug",
+        "water|ghost",
+        "water|steel",
+        "water|fire",
+        "water",
+        "water|grass",
+        "water|electric",
+        "water|psychic",
+        "water|ice",
+        "water|dragon",
+        "water|dark",
+        "water|fairy"
+      ];
+      var vals = [1, 2, 8, 6, 9, 11, 5, 2, 1, 1, 67, 3, 2, 5, 7, 3, 4, 4];
+
+      var dataset = new Array();
+
+      for (var i = 0; i < type.length; i++) {
+        var data = new Array();
+        var total = 0;
+
+        for (var j = 0; j < cat.length; j++) {
+          var value = vals[j];
+          total += value;
+          data.push({
+            cat: cat[j],
+            val: value
+          });
+        }
+
+        dataset.push({
+          type: type[i],
+          unit: unit[i],
+          data: data,
+          total: total
+        });
+      }
+      return dataset;
+    }
+
+    function genGrass() {
+      var type = ["Grass Types"];
+      var unit = [""];
+      var cat = [
+        "grass|normal",
+        "grass|fighting",
+        "grass|flying",
+        "grass|poison",
+        "grass|ground",
+        "grass|rock",
+        "grass|bug",
+        "grass|ghost",
+        "grass|steel",
+        "grass|fire",
+        "grass|water",
+        "grass",
+        "grass|electric",
+        "grass|psychic",
+        "grass|ice",
+        "grass|dragon",
+        "grass|dark",
+        "grass|fairy"
+      ];
+      var vals = [2, 3, 6, 14, 1, 2, 6, 6, 3, 0, 3, 43, 0, 3, 2, 4, 3, 5];
+
+      var dataset = new Array();
+
+      for (var i = 0; i < type.length; i++) {
+        var data = new Array();
+        var total = 0;
+
+        for (var j = 0; j < cat.length; j++) {
+          var value = vals[j];
+          total += value;
+          data.push({
+            cat: cat[j],
+            val: value
+          });
+        }
+
+        dataset.push({
+          type: type[i],
+          unit: unit[i],
+          data: data,
+          total: total
+        });
+      }
+      return dataset;
+    }
+
+    function genElectric() {
+      var type = ["ElectricTypes"];
+      var unit = [""];
+      var cat = [
+        "electric|normal",
+        "electric|fighting",
+        "electric|flying",
+        "electric|poison",
+        "electric|ground",
+        "electric|rock",
+        "electric|bug",
+        "electric|ghost",
+        "electric|steel",
+        "electric|fire",
+        "electric|water",
+        "electric|grass",
+        "electric",
+        "electric|psychic",
+        "electric|ice",
+        "electric|dragon",
+        "electric|dark",
+        "electric|fairy"
+      ];
+      var vals = [2, 0, 3, 2, 1, 3, 4, 1, 4, 0, 2, 0, 33, 1, 1, 2, 1, 2];
+
+      var dataset = new Array();
+
+      for (var i = 0; i < type.length; i++) {
+        var data = new Array();
+        var total = 0;
+
+        for (var j = 0; j < cat.length; j++) {
+          var value = vals[j];
+          total += value;
+          data.push({
+            cat: cat[j],
+            val: value
+          });
+        }
+
+        dataset.push({
+          type: type[i],
+          unit: unit[i],
+          data: data,
+          total: total
+        });
+      }
+      return dataset;
+    }
+
+    function genPsychic() {
+      var type = ["Pyschic Types"];
+      var unit = [""];
+      var cat = [
+        "psychic|normal",
+        "psychic|fighting",
+        "psychic|flying",
+        "psychic|poison",
+        "psychic|ground",
+        "psychic|rock",
+        "psychic|bug",
+        "psychic|ghost",
+        "psychic|steel",
+        "psychic|fire",
+        "psychic|water",
+        "psychic|grass",
+        "psychic|electric",
+        "psychic",
+        "psychic|ice",
+        "psychic|dragon",
+        "psychic|dark",
+        "psychic|fairy"
+      ];
+      var vals = [4, 3, 6, 0, 2, 2, 2, 2, 7, 2, 5, 3, 1, 37, 3, 2, 2, 7];
+
+      var dataset = new Array();
+
+      for (var i = 0; i < type.length; i++) {
+        var data = new Array();
+        var total = 0;
+
+        for (var j = 0; j < cat.length; j++) {
+          var value = vals[j];
+          total += value;
+          data.push({
+            cat: cat[j],
+            val: value
+          });
+        }
+
+        dataset.push({
+          type: type[i],
+          unit: unit[i],
+          data: data,
+          total: total
+        });
+      }
+      return dataset;
+    }
+    function genIce() {
+      var type = ["Ice Types"];
+      var unit = [""];
+      var cat = [
+        "ice|normal",
+        "ice|fighting",
+        "ice|flying",
+        "ice|poison",
+        "ice|ground",
+        "ice|rock",
+        "ice|bug",
+        "ice|ghost",
+        "ice|steel",
+        "ice|fire",
+        "ice|water",
+        "ice|grass",
+        "ice|electric",
+        "ice|psychic",
+        "ice",
+        "ice|dragon",
+        "ice|dark",
+        "ice|fairy"
+      ];
+      var vals = [0, 1, 2, 0, 3, 2, 2, 1, 2, 0, 7, 2, 1, 3, 14, 1, 2, 1];
+
+      var dataset = new Array();
+
+      for (var i = 0; i < type.length; i++) {
+        var data = new Array();
+        var total = 0;
+
+        for (var j = 0; j < cat.length; j++) {
+          var value = vals[j];
+          total += value;
+          data.push({
+            cat: cat[j],
+            val: value
+          });
+        }
+
+        dataset.push({
+          type: type[i],
+          unit: unit[i],
+          data: data,
+          total: total
+        });
+      }
+      return dataset;
+    }
+    function genDragon() {
+      var type = ["Dragon Types"];
+      var unit = [""];
+      var cat = [
+        "dragon|normal",
+        "dragon|fighting",
+        "dragon|flying",
+        "dragon|poison",
+        "dragon|ground",
+        "dragon|rock",
+        "dragon|bug",
+        "dragon|ghost",
+        "dragon|steel",
+        "dragon|fire",
+        "dragon|water",
+        "dragon|grass",
+        "dragon|electric",
+        "dragon|psychic",
+        "dragon|ice",
+        "dragon",
+        "dragon|dark",
+        "dragon|fairy"
+      ];
+      var vals = [1, 2, 6, 2, 6, 2, 0, 4, 2, 2, 3, 4, 2, 2, 1, 12, 4, 0];
+
+      var dataset = new Array();
+
+      for (var i = 0; i < type.length; i++) {
+        var data = new Array();
+        var total = 0;
+
+        for (var j = 0; j < cat.length; j++) {
+          var value = vals[j];
+          total += value;
+          data.push({
+            cat: cat[j],
+            val: value
+          });
+        }
+
+        dataset.push({
+          type: type[i],
+          unit: unit[i],
+          data: data,
+          total: total
+        });
+      }
+      return dataset;
+    }
+
+    function genDark() {
+      var type = ["Dark Types"];
+      var unit = [""];
+      var cat = [
+        "dark|normal",
+        "dark|fighting",
+        "dark|flying",
+        "dark|poison",
+        "dark|ground",
+        "dark|rock",
+        "dark|bug",
+        "dark|ghost",
+        "dark|steel",
+        "dark|fire",
+        "dark|water",
+        "dark|grass",
+        "dark|electric",
+        "dark|psychic",
+        "dark|ice",
+        "dark|dragon",
+        "dark",
+        "dark|fairy"
+      ];
+      var vals = [4, 3, 5, 5, 3, 1, 0, 2, 2, 3, 4, 3, 1, 2, 2, 4, 13, 3];
+
+      var dataset = new Array();
+
+      for (var i = 0; i < type.length; i++) {
+        var data = new Array();
+        var total = 0;
+
+        for (var j = 0; j < cat.length; j++) {
+          var value = vals[j];
+          total += value;
+          data.push({
+            cat: cat[j],
+            val: value
+          });
+        }
+
+        dataset.push({
+          type: type[i],
+          unit: unit[i],
+          data: data,
+          total: total
+        });
+      }
+      return dataset;
+    }
+
+    function genFairy() {
+      var type = ["Fairy Types"];
+      var unit = [""];
+      var cat = [
+        "fairy|normal",
+        "fairy|fighting",
+        "fairy|flying",
+        "fairy|poison",
+        "fairy|ground",
+        "fairy|rock",
+        "fairy|bug",
+        "fairy|ghost",
+        "fairy|steel",
+        "fairy|fire",
+        "fairy|water",
+        "fairy|grass",
+        "fairy|electric",
+        "fairy|psychic",
+        "fairy|ice",
+        "fairy|dragon",
+        "fairy|darl",
+        "fairy"
+      ];
+      var vals = [4, 0, 2, 0, 0, 2, 2, 1, 3, 0, 4, 5, 2, 7, 1, 0, 3, 19];
+
+      var dataset = new Array();
+
+      for (var i = 0; i < type.length; i++) {
+        var data = new Array();
+        var total = 0;
+
+        for (var j = 0; j < cat.length; j++) {
+          var value = vals[j];
+          total += value;
+          data.push({
+            cat: cat[j],
+            val: value
+          });
+        }
+
+        dataset.push({
+          type: type[i],
+          unit: unit[i],
+          data: data,
+          total: total
+        });
+      }
+      return dataset;
+    }
+    //Test
+  </script>
+</body>
