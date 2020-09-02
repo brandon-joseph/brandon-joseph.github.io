@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<!--
+	Aerial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+  <head>
+    <title>Brandon J G.C. Joseph's Github</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript
+      ><link rel="stylesheet" href="assets/css/noscript.css"
+    /></noscript>
+  </head>
+  <div id="adobe-dc-view" style="width: 800px"></div>
+  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script type="text/javascript">
+    document.addEventListener("adobe_dc_view_sdk.ready", function () {
+      var adobeDCView = new AdobeDC.View({
+        clientId: "7b092e7ba39b485b93447c0ec8c5080f",
+        divId: "adobe-dc-view",
+      });
+      adobeDCView.previewFile(
+        {
+          content: {
+            location: {
+              url:
+                "https://brandon-joseph.github.io/Files/GeneralQuestionnaire/Main.pdf",
+            },
+          },
+          metaData: { fileName: "Main" },
+        },
+        {
+          embedMode: "IN_LINE",
+          showDownloadPDF: false,
+          showPrintPDF: false,
+        }
+      );
+    });
+  </script>
+</html>
