@@ -14,6 +14,7 @@
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     /* position: absolute; */
     display: block;
+<<<<<<< HEAD
     /* margin: 0; */
     top: 100px;
     margin-left: 50px;
@@ -71,6 +72,16 @@
   #right {
     flex: 1;
   }
+=======
+    margin: 0 auto;
+    top: 50px;
+    /* left: 25px; */
+    width: 500px;
+    height: 500px;
+    background-attachment: fixed;
+    background-position: center;
+  }
+>>>>>>> parent of 320aeb4... Added poke feature
   #refresh-btn {
     float: right;
 
@@ -80,6 +91,7 @@
 </style>
 <!-- <body bgcolor="#000000"></body> -->
 <body background="bg4.jpg"></body>
+<<<<<<< HEAD
 <div id="wrapper">
   <div id="left">
     <body class="main">
@@ -97,6 +109,125 @@
 
           $("#refresh-btn").on("click", function refresh() {
             donuts.update(genData);
+=======
+<h1><b>Pokemon Type Chart - Beta </b></h1>
+<body>
+  <button type="button" id="refresh-btn">Reset</button>
+  <div id="donut-charts"></div>
+
+  <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
+  <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <script>
+    $(function() {
+      var donutData = genData();
+
+      var donuts = new DonutCharts();
+      donuts.create(donutData);
+
+      $("#refresh-btn").on("click", function refresh() {
+        donuts.update(genData);
+      });
+    });
+
+    function DonutCharts() {
+      var charts = d3.select("#donut-charts");
+
+      var chart_m, chart_r;
+      //color = d3.scale.category20();
+
+      var color = d3.scale
+        .ordinal()
+        .domain([
+          "Normal",
+          "Fighting",
+          "Flying",
+          "Poison",
+          "Ground",
+          "Rock",
+          "Bug",
+          "Ghost",
+          "Steel",
+          "Fire",
+          "Water",
+          "Grass",
+          "Electric",
+          "Psychic",
+          "Ice",
+          "Dragon",
+          "Dark",
+          "Fairy"
+        ])
+        .range([
+          "#6c6d4e",
+          "#c02f28",
+          "#a890f0",
+          "#a040a0",
+          "#dfc068",
+          "#b8a038",
+          "#a8b81e",
+          "#705898",
+          "#b8b8d0",
+          "#f08030",
+          "#6890f0",
+          "#78c850",
+          "#f8d02f",
+          "#f75887",
+          "#98d8d8",
+          "#7038f8",
+          "#705847",
+          "#ee99ac"
+        ]);
+
+      var subColor = d3.scale
+        .ordinal()
+        .domain([
+          "normal|dark",
+          "normal|dragon",
+          "normal|eletric",
+          "normal|fairy",
+          "normal|fighting",
+          "normal|fire",
+          "normal|flying",
+          "normal|grass",
+          "normal|ground",
+          "normal",
+          "normal|psychic",
+          "normal|water"
+        ])
+        .range([
+          "#705847",
+          "#f8d02f",
+          "#ee99ac",
+          "#c02f28",
+          "#f08030",
+          "#a890f0",
+          "#78c850",
+          "#b8a038",
+          "#6c6d4e",
+          "#f75887",
+          "#6890f0"
+        ]);
+
+      var getCatNames = function(dataset) {
+        var catNames = new Array();
+
+        for (var i = 0; i < dataset[0].data.length; i++) {
+          catNames.push(dataset[0].data[i].cat);
+        }
+
+        return catNames;
+      };
+
+      var createLegend = function(catNames) {
+        var legends = charts
+          .select(".legend")
+          .selectAll("g")
+          .data(catNames)
+          .enter()
+          .append("g")
+          .attr("transform", function(d, i) {
+            return "translate(" + (i * 150 + 50) + ", 10)";
+>>>>>>> parent of 320aeb4... Added poke feature
           });
         });
 
@@ -1434,6 +1565,7 @@
           return dataset;
         }
 
+<<<<<<< HEAD
         function genFairy() {
           var type = ["Fairy Types"];
           var unit = [""];
@@ -1548,3 +1680,17 @@
     </body>
   </div>
 </div>
+=======
+        dataset.push({
+          type: type[i],
+          unit: unit[i],
+          data: data,
+          total: total
+        });
+      }
+      return dataset;
+    }
+    //Test
+  </script>
+</body>
+>>>>>>> parent of 320aeb4... Added poke feature
