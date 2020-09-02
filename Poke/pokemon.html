@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <meta charset="utf-8" />
 <head>
-  <title>Test</title>
+  <title>Pokemon Type Chart</title>
 </head>
 <style type="text/css">
   * {
@@ -14,7 +14,6 @@
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     /* position: absolute; */
     display: block;
-<<<<<<< HEAD
     /* margin: 0; */
     top: 100px;
     margin-left: 50px;
@@ -72,16 +71,6 @@
   #right {
     flex: 1;
   }
-=======
-    margin: 0 auto;
-    top: 50px;
-    /* left: 25px; */
-    width: 500px;
-    height: 500px;
-    background-attachment: fixed;
-    background-position: center;
-  }
->>>>>>> parent of 320aeb4... Added poke feature
   #refresh-btn {
     float: right;
 
@@ -91,8 +80,6 @@
 </style>
 <!-- <body bgcolor="#000000"></body> -->
 <body background="bg4.jpg"></body>
-<<<<<<< HEAD
-<<<<<<< HEAD
 <div id="wrapper">
   <div id="left">
     <body class="main">
@@ -102,7 +89,7 @@
       <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
       <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
       <script>
-        $(function() {
+        $(function () {
           var donutData = genData();
 
           var donuts = new DonutCharts();
@@ -110,127 +97,6 @@
 
           $("#refresh-btn").on("click", function refresh() {
             donuts.update(genData);
-=======
-<h1><b>Pokemon Type Chart - Beta </b></h1>
-=======
->>>>>>> parent of 0ec99b4... Added poke feature
-<body>
-  <button type="button" id="refresh-btn">Reset</button>
-  <div id="donut-charts"></div>
-
-  <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
-  <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-  <script>
-    $(function() {
-      var donutData = genData();
-
-      var donuts = new DonutCharts();
-      donuts.create(donutData);
-
-      $("#refresh-btn").on("click", function refresh() {
-        donuts.update(genData);
-      });
-    });
-
-    function DonutCharts() {
-      var charts = d3.select("#donut-charts");
-
-      var chart_m, chart_r;
-      //color = d3.scale.category20();
-
-      var color = d3.scale
-        .ordinal()
-        .domain([
-          "Normal",
-          "Fighting",
-          "Flying",
-          "Poison",
-          "Ground",
-          "Rock",
-          "Bug",
-          "Ghost",
-          "Steel",
-          "Fire",
-          "Water",
-          "Grass",
-          "Electric",
-          "Psychic",
-          "Ice",
-          "Dragon",
-          "Dark",
-          "Fairy"
-        ])
-        .range([
-          "#6c6d4e",
-          "#c02f28",
-          "#a890f0",
-          "#a040a0",
-          "#dfc068",
-          "#b8a038",
-          "#a8b81e",
-          "#705898",
-          "#b8b8d0",
-          "#f08030",
-          "#6890f0",
-          "#78c850",
-          "#f8d02f",
-          "#f75887",
-          "#98d8d8",
-          "#7038f8",
-          "#705847",
-          "#ee99ac"
-        ]);
-
-      var subColor = d3.scale
-        .ordinal()
-        .domain([
-          "normal|dark",
-          "normal|dragon",
-          "normal|eletric",
-          "normal|fairy",
-          "normal|fighting",
-          "normal|fire",
-          "normal|flying",
-          "normal|grass",
-          "normal|ground",
-          "normal",
-          "normal|psychic",
-          "normal|water"
-        ])
-        .range([
-          "#705847",
-          "#f8d02f",
-          "#ee99ac",
-          "#c02f28",
-          "#f08030",
-          "#a890f0",
-          "#78c850",
-          "#b8a038",
-          "#6c6d4e",
-          "#f75887",
-          "#6890f0"
-        ]);
-
-      var getCatNames = function(dataset) {
-        var catNames = new Array();
-
-        for (var i = 0; i < dataset[0].data.length; i++) {
-          catNames.push(dataset[0].data[i].cat);
-        }
-
-        return catNames;
-      };
-
-      var createLegend = function(catNames) {
-        var legends = charts
-          .select(".legend")
-          .selectAll("g")
-          .data(catNames)
-          .enter()
-          .append("g")
-          .attr("transform", function(d, i) {
-            return "translate(" + (i * 150 + 50) + ", 10)";
->>>>>>> parent of 320aeb4... Added poke feature
           });
         });
 
@@ -260,7 +126,7 @@
               "Ice",
               "Dragon",
               "Dark",
-              "Fairy"
+              "Fairy",
             ])
             .range([
               "#6c6d4e",
@@ -280,7 +146,7 @@
               "#98d8d8",
               "#7038f8",
               "#705847",
-              "#ee99ac"
+              "#ee99ac",
             ]);
 
           var subColor = d3.scale
@@ -297,7 +163,7 @@
               "normal|ground",
               "normal",
               "normal|psychic",
-              "normal|water"
+              "normal|water",
             ])
             .range([
               "#705847",
@@ -310,10 +176,10 @@
               "#b8a038",
               "#6c6d4e",
               "#f75887",
-              "#6890f0"
+              "#6890f0",
             ]);
 
-          var getCatNames = function(dataset) {
+          var getCatNames = function (dataset) {
             var catNames = new Array();
 
             for (var i = 0; i < dataset[0].data.length; i++) {
@@ -323,14 +189,14 @@
             return catNames;
           };
 
-          var createLegend = function(catNames) {
+          var createLegend = function (catNames) {
             var legends = charts
               .select(".legend")
               .selectAll("g")
               .data(catNames)
               .enter()
               .append("g")
-              .attr("transform", function(d, i) {
+              .attr("transform", function (d, i) {
                 return "translate(" + (i * 150 + 50) + ", 10)";
               });
 
@@ -338,7 +204,7 @@
               .append("circle")
               .attr("class", "legend-icon")
               .attr("r", 6)
-              .style("fill", function(d, i) {
+              .style("fill", function (d, i) {
                 return color(i);
               });
 
@@ -346,20 +212,20 @@
               .append("text")
               .attr("dx", "1em")
               .attr("dy", ".3em")
-              .text(function(d) {
+              .text(function (d) {
                 return d;
               });
           };
 
-          var createCenter = function(pie) {
+          var createCenter = function (pie) {
             var eventObj = {
-              mouseover: function(d, i) {
+              mouseover: function (d, i) {
                 d3.select(this)
                   .transition()
                   .attr("r", chart_r * 0.65);
               },
 
-              mouseout: function(d, i) {
+              mouseout: function (d, i) {
                 d3.select(this)
                   .transition()
                   .duration(500)
@@ -367,12 +233,12 @@
                   .attr("r", chart_r * 0.6);
               },
 
-              click: function(d, i) {
+              click: function (d, i) {
                 var paths = charts.selectAll(".clicked");
                 pathAnim(paths, 0);
                 paths.classed("clicked", false);
                 resetAllCenterText();
-              }
+              },
             };
 
             var donuts = d3.selectAll(".donut");
@@ -390,7 +256,7 @@
               .attr("y", chart_r * -0.16)
               .attr("text-anchor", "middle")
               .style("font-weight", "bold")
-              .text(function(d, i) {
+              .text(function (d, i) {
                 return d.type;
               });
             donuts
@@ -405,32 +271,32 @@
               .style("fill", "#A2A2A2");
           };
 
-          var setCenterText = function(thisDonut) {
-            var sum = d3.sum(thisDonut.selectAll(".clicked").data(), function(
+          var setCenterText = function (thisDonut) {
+            var sum = d3.sum(thisDonut.selectAll(".clicked").data(), function (
               d
             ) {
               return d.data.val;
             });
 
-            thisDonut.select(".value").text(function(d) {
+            thisDonut.select(".value").text(function (d) {
               // return sum ? sum.toFixed(1) + d.unit : d.total.toFixed(1) + d.unit;
               return "Select a color";
             });
-            thisDonut.select(".percentage").text(function(d) {
+            thisDonut.select(".percentage").text(function (d) {
               //  return sum ? ((sum / d.total) * 100).toFixed(2) + "%" : ""; //Original
               return sum ? ((sum / 910) * 100).toFixed(2) + "%" : "";
             });
           };
 
-          var resetAllCenterText = function() {
-            charts.selectAll(".value").text(function(d) {
+          var resetAllCenterText = function () {
+            charts.selectAll(".value").text(function (d) {
               return d.total + d.unit + " Total";
               return "Select a color";
             });
             charts.selectAll(".percentage").text("");
           };
 
-          var pathAnim = function(path, dir) {
+          var pathAnim = function (path, dir) {
             switch (dir) {
               case 0:
                 path
@@ -459,17 +325,17 @@
             }
           };
 
-          var updateDonut = function() {
+          var updateDonut = function () {
             //For hover over portion of donut
             var eventObj = {
-              mouseover: function(d, i, j) {
+              mouseover: function (d, i, j) {
                 pathAnim(d3.select(this), 1);
 
                 var thisDonut = charts.select(".type" + j);
-                thisDonut.select(".value").text(function(donut_d) {
+                thisDonut.select(".value").text(function (donut_d) {
                   return d.data.val + donut_d.unit;
                 });
-                thisDonut.select(".percentage").text(function(donut_d) {
+                thisDonut.select(".percentage").text(function (donut_d) {
                   return (
                     d.data.cat +
                     " " +
@@ -479,7 +345,7 @@
                 });
               },
 
-              mouseout: function(d, i, j) {
+              mouseout: function (d, i, j) {
                 var thisPath = d3.select(this);
                 if (!thisPath.classed("clicked")) {
                   pathAnim(thisPath, 0);
@@ -490,7 +356,7 @@
 
               //Important part
 
-              click: function(d, i, j) {
+              click: function (d, i, j) {
                 console.log(d.data.cat);
                 if (d.data.cat == "Normal") {
                   charts.selectAll(".donut").data(genNormal());
@@ -550,21 +416,21 @@
                 }
 
                 updateDonut();
-              }
+              },
               //Important part
             };
 
             var pie = d3.layout
               .pie()
               .sort(null)
-              .value(function(d) {
+              .value(function (d) {
                 return d.val;
               });
 
             var arc = d3.svg
               .arc()
               .innerRadius(chart_r * 0.7)
-              .outerRadius(function() {
+              .outerRadius(function () {
                 return d3.select(this).classed("clicked")
                   ? chart_r * 1.08
                   : chart_r;
@@ -574,20 +440,17 @@
             var paths = charts
               .selectAll(".donut")
               .selectAll("path")
-              .data(function(d, i) {
+              .data(function (d, i) {
                 return pie(d.data);
               });
 
-            paths
-              .transition()
-              .duration(1000)
-              .attr("d", arc);
+            paths.transition().duration(1000).attr("d", arc);
 
             paths
               .enter()
               .append("svg:path")
               .attr("d", arc)
-              .style("fill", function(d, i) {
+              .style("fill", function (d, i) {
                 return color(i);
               })
               .style("stroke", "#FFFFFF")
@@ -598,7 +461,7 @@
             resetAllCenterText();
           };
 
-          this.create = function(dataset) {
+          this.create = function (dataset) {
             var $charts = $("#donut-charts");
             chart_m = ($charts.innerWidth() / dataset.length / 2) * 0.14;
             chart_r = ($charts.innerWidth() / dataset.length / 2) * 0.85;
@@ -618,7 +481,7 @@
               .attr("width", (chart_r + chart_m) * 2)
               .attr("height", (chart_r + chart_m) * 2)
               .append("svg:g")
-              .attr("class", function(d, i) {
+              .attr("class", function (d, i) {
                 return "donut type" + i;
               })
               .attr(
@@ -636,7 +499,7 @@
             updateDonut();
           };
 
-          this.update = function(dataset) {
+          this.update = function (dataset) {
             // Assume no new categ of data enter
             var donut = charts.selectAll(".donut").data(dataset);
 
@@ -668,7 +531,7 @@
             "Ice",
             "Dragon",
             "Dark",
-            "Fairy"
+            "Fairy",
           ];
 
           var vals = [
@@ -689,7 +552,7 @@
             44,
             55,
             60,
-            55
+            55,
           ];
 
           var dataset = new Array();
@@ -703,7 +566,7 @@
               total += value;
               data.push({
                 cat: cat[j],
-                val: value
+                val: value,
               });
             }
 
@@ -711,7 +574,7 @@
               type: type[i],
               unit: unit[i],
               data: data,
-              total: total
+              total: total,
             });
           }
           return dataset;
@@ -741,7 +604,7 @@
             "normal|dragon",
             "normal|dark",
 
-            "normal|fairy"
+            "normal|fairy",
           ];
 
           var vals = [69, 2, 26, 0, 1, 0, 0, 0, 0, 2, 2, 2, 4, 0, 1, 2, 4, 4];
@@ -757,7 +620,7 @@
               total += value;
               data.push({
                 cat: cat[j],
-                val: value
+                val: value,
               });
             }
 
@@ -765,7 +628,7 @@
               type: type[i],
               unit: unit[i],
               data: data,
-              total: total
+              total: total,
             });
           }
           return dataset;
@@ -792,7 +655,7 @@
             "fighting|ice",
             "fighting|dragon",
             "fighting|dark",
-            "fighting|fairy"
+            "fighting|fairy",
           ];
 
           var vals = [2, 27, 1, 2, 0, 1, 3, 1, 2, 6, 2, 3, 3, 3, 1, 2, 3, 0];
@@ -808,7 +671,7 @@
               total += value;
               data.push({
                 cat: cat[j],
-                val: value
+                val: value,
               });
             }
 
@@ -816,7 +679,7 @@
               type: type[i],
               unit: unit[i],
               data: data,
-              total: total
+              total: total,
             });
           }
           return dataset;
@@ -843,7 +706,7 @@
             "flying|ice",
             "flying|dragon",
             "flying|dark",
-            "flying|fairy"
+            "flying|fairy",
           ];
 
           var vals = [26, 1, 3, 3, 3, 4, 13, 2, 3, 6, 8, 6, 3, 6, 2, 6, 5, 2];
@@ -859,7 +722,7 @@
               total += value;
               data.push({
                 cat: cat[j],
-                val: value
+                val: value,
               });
             }
 
@@ -867,7 +730,7 @@
               type: type[i],
               unit: unit[i],
               data: data,
-              total: total
+              total: total,
             });
           }
           return dataset;
@@ -893,7 +756,7 @@
             "poison|ice",
             "poison|dragon",
             "poison|dark",
-            "poison|fairy"
+            "poison|fairy",
           ];
           var vals = [0, 2, 3, 16, 2, 0, 12, 0, 0, 2, 6, 14, 2, 0, 0, 2, 5, 0];
 
@@ -908,7 +771,7 @@
               total += value;
               data.push({
                 cat: cat[j],
-                val: value
+                val: value,
               });
             }
 
@@ -916,7 +779,7 @@
               type: type[i],
               unit: unit[i],
               data: data,
-              total: total
+              total: total,
             });
           }
           return dataset;
@@ -942,7 +805,7 @@
             "ground|ice",
             "ground|dragon",
             "ground|dark",
-            "ground|fairy"
+            "ground|fairy",
           ];
           var vals = [1, 0, 3, 2, 17, 9, 1, 5, 4, 2, 9, 1, 1, 2, 3, 6, 3, 0];
 
@@ -957,7 +820,7 @@
               total += value;
               data.push({
                 cat: cat[j],
-                val: value
+                val: value,
               });
             }
 
@@ -965,7 +828,7 @@
               type: type[i],
               unit: unit[i],
               data: data,
-              total: total
+              total: total,
             });
           }
           return dataset;
@@ -991,7 +854,7 @@
             "rock|ice",
             "rock|dragon",
             "rock|dark",
-            "rock|fairy"
+            "rock|fairy",
           ];
           var vals = [0, 1, 4, 1, 9, 13, 5, 0, 7, 3, 11, 2, 3, 2, 2, 2, 1, 2];
 
@@ -1006,7 +869,7 @@
               total += value;
               data.push({
                 cat: cat[j],
-                val: value
+                val: value,
               });
             }
 
@@ -1014,7 +877,7 @@
               type: type[i],
               unit: unit[i],
               data: data,
-              total: total
+              total: total,
             });
           }
           return dataset;
@@ -1041,7 +904,7 @@
             "bug|ice",
             "bug|dragon",
             "bug|dark",
-            "bug|fairy"
+            "bug|fairy",
           ];
           var vals = [0, 3, 13, 12, 1, 5, 19, 0, 5, 4, 5, 6, 4, 2, 2, 0, 0, 2];
 
@@ -1056,7 +919,7 @@
               total += value;
               data.push({
                 cat: cat[j],
-                val: value
+                val: value,
               });
             }
 
@@ -1064,7 +927,7 @@
               type: type[i],
               unit: unit[i],
               data: data,
-              total: total
+              total: total,
             });
           }
           return dataset;
@@ -1091,7 +954,7 @@
             "ghost|ice",
             "ghost|dragon",
             "ghost|dark",
-            "ghost|fairy"
+            "ghost|fairy",
           ];
           var vals = [0, 1, 2, 3, 5, 0, 1, 12, 3, 5, 2, 6, 1, 2, 1, 4, 2, 1];
 
@@ -1106,7 +969,7 @@
               total += value;
               data.push({
                 cat: cat[j],
-                val: value
+                val: value,
               });
             }
 
@@ -1114,7 +977,7 @@
               type: type[i],
               unit: unit[i],
               data: data,
-              total: total
+              total: total,
             });
           }
           return dataset;
@@ -1141,7 +1004,7 @@
             "steel|ice",
             "steel|dragon",
             "steel|dark",
-            "steel|fairy"
+            "steel|fairy",
           ];
           var vals = [0, 2, 3, 0, 4, 7, 5, 3, 9, 1, 1, 3, 4, 7, 2, 2, 2, 3];
 
@@ -1156,7 +1019,7 @@
               total += value;
               data.push({
                 cat: cat[j],
-                val: value
+                val: value,
               });
             }
 
@@ -1164,7 +1027,7 @@
               type: type[i],
               unit: unit[i],
               data: data,
-              total: total
+              total: total,
             });
           }
           return dataset;
@@ -1191,7 +1054,7 @@
             "fire|ice",
             "fire|dragon",
             "fire|dark",
-            "fire|fairy"
+            "fire|fairy",
           ];
           var vals = [2, 6, 6, 2, 2, 3, 4, 5, 1, 33, 1, 0, 0, 2, 0, 2, 3, 0];
 
@@ -1206,7 +1069,7 @@
               total += value;
               data.push({
                 cat: cat[j],
-                val: value
+                val: value,
               });
             }
 
@@ -1214,7 +1077,7 @@
               type: type[i],
               unit: unit[i],
               data: data,
-              total: total
+              total: total,
             });
           }
           return dataset;
@@ -1241,7 +1104,7 @@
             "water|ice",
             "water|dragon",
             "water|dark",
-            "water|fairy"
+            "water|fairy",
           ];
           var vals = [1, 2, 8, 6, 9, 11, 5, 2, 1, 1, 67, 3, 2, 5, 7, 3, 4, 4];
 
@@ -1256,7 +1119,7 @@
               total += value;
               data.push({
                 cat: cat[j],
-                val: value
+                val: value,
               });
             }
 
@@ -1264,7 +1127,7 @@
               type: type[i],
               unit: unit[i],
               data: data,
-              total: total
+              total: total,
             });
           }
           return dataset;
@@ -1291,7 +1154,7 @@
             "grass|ice",
             "grass|dragon",
             "grass|dark",
-            "grass|fairy"
+            "grass|fairy",
           ];
           var vals = [2, 3, 6, 14, 1, 2, 6, 6, 3, 0, 3, 43, 0, 3, 2, 4, 3, 5];
 
@@ -1306,7 +1169,7 @@
               total += value;
               data.push({
                 cat: cat[j],
-                val: value
+                val: value,
               });
             }
 
@@ -1314,7 +1177,7 @@
               type: type[i],
               unit: unit[i],
               data: data,
-              total: total
+              total: total,
             });
           }
           return dataset;
@@ -1341,7 +1204,7 @@
             "electric|ice",
             "electric|dragon",
             "electric|dark",
-            "electric|fairy"
+            "electric|fairy",
           ];
           var vals = [2, 0, 3, 2, 1, 3, 4, 1, 4, 0, 2, 0, 33, 1, 1, 2, 1, 2];
 
@@ -1356,7 +1219,7 @@
               total += value;
               data.push({
                 cat: cat[j],
-                val: value
+                val: value,
               });
             }
 
@@ -1364,7 +1227,7 @@
               type: type[i],
               unit: unit[i],
               data: data,
-              total: total
+              total: total,
             });
           }
           return dataset;
@@ -1391,7 +1254,7 @@
             "psychic|ice",
             "psychic|dragon",
             "psychic|dark",
-            "psychic|fairy"
+            "psychic|fairy",
           ];
           var vals = [4, 3, 6, 0, 2, 2, 2, 2, 7, 2, 5, 3, 1, 37, 3, 2, 2, 7];
 
@@ -1406,7 +1269,7 @@
               total += value;
               data.push({
                 cat: cat[j],
-                val: value
+                val: value,
               });
             }
 
@@ -1414,7 +1277,7 @@
               type: type[i],
               unit: unit[i],
               data: data,
-              total: total
+              total: total,
             });
           }
           return dataset;
@@ -1440,7 +1303,7 @@
             "ice",
             "ice|dragon",
             "ice|dark",
-            "ice|fairy"
+            "ice|fairy",
           ];
           var vals = [0, 1, 2, 0, 3, 2, 2, 1, 2, 0, 7, 2, 1, 3, 14, 1, 2, 1];
 
@@ -1455,7 +1318,7 @@
               total += value;
               data.push({
                 cat: cat[j],
-                val: value
+                val: value,
               });
             }
 
@@ -1463,7 +1326,7 @@
               type: type[i],
               unit: unit[i],
               data: data,
-              total: total
+              total: total,
             });
           }
           return dataset;
@@ -1489,7 +1352,7 @@
             "dragon|ice",
             "dragon",
             "dragon|dark",
-            "dragon|fairy"
+            "dragon|fairy",
           ];
           var vals = [1, 2, 6, 2, 6, 2, 0, 4, 2, 2, 3, 4, 2, 2, 1, 12, 4, 0];
 
@@ -1504,7 +1367,7 @@
               total += value;
               data.push({
                 cat: cat[j],
-                val: value
+                val: value,
               });
             }
 
@@ -1512,7 +1375,7 @@
               type: type[i],
               unit: unit[i],
               data: data,
-              total: total
+              total: total,
             });
           }
           return dataset;
@@ -1539,7 +1402,7 @@
             "dark|ice",
             "dark|dragon",
             "dark",
-            "dark|fairy"
+            "dark|fairy",
           ];
           var vals = [4, 3, 5, 5, 3, 1, 0, 2, 2, 3, 4, 3, 1, 2, 2, 4, 13, 3];
 
@@ -1554,7 +1417,7 @@
               total += value;
               data.push({
                 cat: cat[j],
-                val: value
+                val: value,
               });
             }
 
@@ -1562,13 +1425,12 @@
               type: type[i],
               unit: unit[i],
               data: data,
-              total: total
+              total: total,
             });
           }
           return dataset;
         }
 
-<<<<<<< HEAD
         function genFairy() {
           var type = ["Fairy Types"];
           var unit = [""];
@@ -1590,7 +1452,7 @@
             "fairy|ice",
             "fairy|dragon",
             "fairy|darl",
-            "fairy"
+            "fairy",
           ];
           var vals = [4, 0, 2, 0, 0, 2, 2, 1, 3, 0, 4, 5, 2, 7, 1, 0, 3, 19];
 
@@ -1605,7 +1467,7 @@
               total += value;
               data.push({
                 cat: cat[j],
-                val: value
+                val: value,
               });
             }
 
@@ -1613,7 +1475,7 @@
               type: type[i],
               unit: unit[i],
               data: data,
-              total: total
+              total: total,
             });
           }
           return dataset;
@@ -1636,8 +1498,8 @@
 
       <table id="myTable">
         <tr class="header">
-          <th style="width:60%;">Pokemon</th>
-          <th style="width:40%;">Types</th>
+          <th style="width: 60%">Pokemon</th>
+          <th style="width: 40%">Types</th>
         </tr>
         <tr>
           <td>Alfreds Futterkiste</td>
@@ -1683,17 +1545,3 @@
     </body>
   </div>
 </div>
-=======
-        dataset.push({
-          type: type[i],
-          unit: unit[i],
-          data: data,
-          total: total
-        });
-      }
-      return dataset;
-    }
-    //Test
-  </script>
-</body>
->>>>>>> parent of 320aeb4... Added poke feature
