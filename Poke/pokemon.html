@@ -2,84 +2,13 @@
 <meta charset="utf-8" />
 <head>
   <title>Pokemon Type Chart</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<style type="text/css">
-  * {
-    margin: 0;
-  }
-
-  .main,
-  body {
-    font-size: 100%;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    /* position: absolute; */
-    display: block;
-    /* margin: 0; */
-    top: 100px;
-    margin-left: 50px;
-    width: 1000px;
-    height: 750px;
-    background-attachment: fixed;
-    background-position: center;
-  }
-
-  #myInput {
-    background-image: url("/css/searchicon.png"); /* Add a search icon to input */
-    background-position: 10px 12px; /* Position the search icon */
-    background-repeat: no-repeat; /* Do not repeat the icon image */
-    width: 100%; /* Full-width */
-    font-size: 16px; /* Increase font-size */
-    /* padding: 12px 20px 12px 40px; Add some padding */
-    border: 1px solid #ddd; /* Add a grey border */
-    /* margin-bottom: 12px; /* Add some space below the input */
-    margin-left: 125px;
-  }
-
-  #myTable {
-    border-collapse: collapse; /* Collapse borders */
-    width: 100%; /* Full-width */
-    border: 1px solid #ddd; /* Add a grey border */
-    font-size: 18px; /* Increase font-size */
-    margin-left: 125px;
-  }
-
-  #myTable th,
-  #myTable td {
-    text-align: left; /* Left-align text */
-    padding: 12px; /* Add padding */
-    margin-left: 125px;
-  }
-
-  #myTable tr {
-    /* Add a bottom border to all table rows */
-    border-bottom: 1px solid #ddd;
-  }
-
-  #myTable tr.header,
-  #myTable tr:hover {
-    /* Add a grey background color to the table header and on hover */
-    background-color: #f1f1f1;
-  }
-  #wrapper {
-    display: flex;
-  }
-
-  #left {
-    flex: 0 0 65%;
-  }
-
-  #right {
-    flex: 1;
-  }
-  #refresh-btn {
-    float: right;
-
-    font-size: 24px;
-    border-radius: 0;
-  }
-</style>
 <!-- <body bgcolor="#000000"></body> -->
-<body background="bg4.jpg"></body>
+<!-- <body background="bg4.jpg"></body> -->
+<!-- <body background="darkwoodhorizontal.jpg"></body> -->
+<!-- <body background="bg3.jpg" id="backg" ></body> -->
+
 <div id="wrapper">
   <div id="left">
     <body class="main">
@@ -179,21 +108,21 @@
               "#6890f0",
             ]);
 
-          var getCatNames = function (dataset) {
-            var catNames = new Array();
+          var getTypeNames = function (dataset) {
+            var typeNames = new Array();
 
             for (var i = 0; i < dataset[0].data.length; i++) {
-              catNames.push(dataset[0].data[i].cat);
+              typeNames.push(dataset[0].data[i].cat);
             }
 
-            return catNames;
+            return typeNames;
           };
 
-          var createLegend = function (catNames) {
+          var createLegend = function (typeNames) {
             var legends = charts
               .select(".legend")
               .selectAll("g")
-              .data(catNames)
+              .data(typeNames)
               .enter()
               .append("g")
               .attr("transform", function (d, i) {
@@ -493,7 +422,7 @@
                   ")"
               );
 
-            createLegend(getCatNames(dataset));
+            createLegend(getTypeNames(dataset));
             createCenter();
 
             updateDonut();
