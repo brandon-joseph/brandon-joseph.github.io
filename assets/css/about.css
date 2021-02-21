@@ -35,3 +35,15 @@ a:active {
   margin-right: -15px;
   margin-left: -15px;
 }
+
+body,
+html,
+div {
+  background-color: #181a1b;
+}
+
+strong,
+h1,
+p {
+  color: aliceblue;
+}
