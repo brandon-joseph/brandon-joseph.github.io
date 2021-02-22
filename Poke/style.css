@@ -1,7 +1,3 @@
-* {
-  margin: 0;
-}
-
 /* #donut-charts {
   display: block;
   /* margin: auto; */
@@ -16,10 +12,10 @@ body {
     height: 750px;
     background-attachment: fixed;
     background-position: center; */
-  min-height: 30%;
-  min-width: 30%;
-  max-height: 45%;
-  max-width: 45%;
+  min-height: 60%;
+  min-width: 60%;
+  max-height: 90%;
+  max-width: 90%;
 }
 
 html {
@@ -27,47 +23,6 @@ html {
   background-size: cover;
   background-repeat: no-repeat;
 }
-
-#myInput {
-  background-image: url("/css/searchicon.png"); /* Add a search icon to input */
-  background-position: 10px 12px; /* Position the search icon */
-  background-repeat: no-repeat; /* Do not repeat the icon image */
-  width: 100%; /* Full-width */
-  font-size: 16px; /* Increase font-size */
-  padding: 12px 20px 12px 40px;
-  border: 1px solid #ddd; /* Add a grey border */
-  margin-bottom: 12px;
-  margin-left: 125px;
-}
-
-#myTable {
-  border-collapse: collapse; /* Collapse borders */
-  width: 100%; /* Full-width */
-  border: 1px solid #ddd; /* Add a grey border */
-  font-size: 18px; /* Increase font-size */
-  margin-left: 125px;
-}
-
-#myTable th,
-#myTable td {
-  text-align: left; /* Left-align text */
-  padding: 12px; /* Add padding */
-  margin-left: 125px;
-}
-
-#myTable tr {
-  /* Add a bottom border to all table rows */
-  border-bottom: 1px solid #ddd;
-}
-
-#myTable tr.header,
-#myTable tr:hover {
-  /* Add a grey background color to the table header and on hover */
-  background-color: #f1f1f1;
-}
-/* #wrapper {
-    display: flex;
-  } */
 
 #left {
   flex: 0 0 65%;
@@ -77,8 +32,36 @@ html {
   flex: 1;
 }
 #refresh-btn {
-  float: right;
+  float: left;
 
   font-size: 24px;
   border-radius: 0;
+}
+
+#imagetable {
+  text-align: right;
+  max-width: 300px;
+  height: 300px;
+  overflow-y: scroll;
+}
+
+.flex-container {
+  display: flex;
+  width: auto;
+}
+
+.flex-child1 {
+  flex: 5;
+  border: 2px solid yellow;
+}
+.flex-child2 {
+  flex: 2;
+  border: 2px solid yellow;
+  height: 900px;
+  width: 300px;
+  overflow-y: scroll;
+}
+
+.flex-child:first-child {
+  margin-right: 10px;
 }

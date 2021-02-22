@@ -3,17 +3,27 @@
 <head>
   <title>Pokemon Type Chart</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="main.js" type="text/javascript"></script>
+  <script src="https://unpkg.com/pokeapi-js-wrapper/dist/index.js"></script>
 </head>
-<!-- <body bgcolor="#000000"></body> -->
-<!-- <body background="bg4.jpg"></body> -->
-<!-- <body background="darkwoodhorizontal.jpg"></body> -->
-<!-- <body background="bg3.jpg" id="backg" ></body> -->
 
-<div id="wrapper">
-  <div id="left">
+
     <body class="main">
       <button type="button" id="refresh-btn">Reset</button>
-      <div id="donut-charts"></div>
+
+      <div class="flex-container">
+        <div class="flex-child1">
+          <div id="donut-charts"></div>
+        </div>
+        <div class="flex-child2">
+          
+         <table id="imagetable" border="1">
+            <tr id="myRow">
+            </tr>
+          </table>
+      </div>
+    </div>
 
       <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
       <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
@@ -1413,64 +1423,59 @@
       </script>
     </body>
     <h1 align="center">Pokemon Type Chart - Beta</h1>
-  </div>
-  <!-- Table
-  <link rel="stylesheet" href="styles.css" />
-  <div id="right">
-    <body class="tableSearch">
-      <input
-        type="text"
-        id="myInput"
-        onkeyup="myFunction()"
-        placeholder="Search for names.."
-      />
 
-      <table id="myTable">
-        <tr class="header">
-          <th style="width: 60%">Pokemon</th>
-          <th style="width: 40%">Types</th>
-        </tr>
-        <tr>
-          <td>Place</td>
-          <td>Germany</td>
-        </tr>
-        <tr>
-          <td>Berglunds snabbkop</td>
-          <td>Sweden</td>
-        </tr>
-        <tr>
-          <td>Island Trading</td>
-          <td>UK</td>
-        </tr>
-        <tr>
-          <td>Koniglich Essen</td>
-          <td>Germany</td>
-        </tr>
-      </table>
+  <!-- <img src=".\sprites\grass\1.png" alt="Bulb" width="50" height="60">
+   -->
+  <script>
+    var table = document.getElementById("imagetable");
 
-      <script>
-        function myFunction() {
-          // Declare variables
-          var input, filter, table, tr, td, i, txtValue;
-          input = document.getElementById("myInput");
-          filter = input.value.toUpperCase();
-          table = document.getElementById("myTable");
-          tr = table.getElementsByTagName("tr");
+    // console.log(allFiles);
 
-          // Loop through all table rows, and hide those who don't match the search query
-          for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[0];
-            if (td) {
-              txtValue = td.textContent || td.innerText;
-              if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                tr[i].style.display = "";
-              } else {
-                tr[i].style.display = "none";
-              }
-            }
-          }
-        }
-      </script> -->
+    const regex = /[0-9]+/;
+    let m;
+
+    const P = new Pokedex.Pokedex();
+    P.getPokemonsList().then(function(response) {
+      console.log(response['results'][0])
+   
+      String.prototype.capitalize = function() {
+          return this.charAt(0).toUpperCase() + this.slice(1);
+      }
+
+      var inc = 0;
+      var row = document.getElementById("myRow");
+      allFiles.forEach((element,i) => {
+
+        if ((m = regex.exec(element)) !== null) {
+          m.forEach((match, groupIndex) => {
+    
+    
+        // console.log(i);
+        if (i % 3 == 0 ) {
+          row = table.insertRow(inc);
+          row.id = "myRow"
+          inc++;
+        } 
+
+        console.log(response['results'][parseInt(match)]['name']);
+        var x = row.insertCell(-1);
+        x.innerHTML = response['results'][parseInt(match)-1]['name'].capitalize();
+        var img = document.createElement('img');
+        img.src = element;
+        x.appendChild(img);
+      });
+      };
+
+      });
+    
+  })
+
+
+        
+
+  </script>
+
+<script src="bundle.js"></script>
     </body>
-  </div>
+
 </div>

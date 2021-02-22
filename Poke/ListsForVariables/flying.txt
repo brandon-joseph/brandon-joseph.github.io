@@ -1,0 +1,1 @@
+['/sprites/flying/641.png', '/sprites/flying/714.png', '/sprites/flying/715.png', '/sprites/flying/821.png', '/sprites/flying/822.png', '/sprites/flying/823.png', '/sprites/flying/845.png']

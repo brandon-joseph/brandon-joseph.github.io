@@ -1,10 +1,15 @@
+import os
+import re
+from glob import glob
+
+
 def topack(pack):
-    list = [y for y in (x.strip() for x in pack.splitlines()) if y]
+    lst = [y for y in (x.strip() for x in pack.splitlines()) if y]
     i = 0
-    for word in list:
+    for word in lst:
         if (i == 0):
             print("[" + word + ",")
-        elif i == len(list)-1:
+        elif i == len(lst)-1:
             print(word + "]")
         else:
             print(word + ',')
@@ -13,8 +18,8 @@ def topack(pack):
 
 
 def flip(pack):
-    list = [y for y in (x.strip() for x in pack.splitlines()) if y]
-    for word in list:
+    lst = [y for y in (x.strip() for x in pack.splitlines()) if y]
+    for word in lst:
         ind = word.find('|')
         first = word[0:ind]
         second = word[ind+1:]
@@ -42,7 +47,7 @@ dic = {"normal": 0,
 
 
 def create(pack):
-    list = [y for y in (x.strip() for x in pack.splitlines()) if y]
+    lst = [y for y in (x.strip() for x in pack.splitlines()) if y]
     dice = {"normal": 0,
             "fighting": 0,
             "flying": 0,
@@ -62,7 +67,7 @@ def create(pack):
             "dark": 0,
             "fairy": 0}
 
-    for word in list:
+    for word in lst:
         ind = word.find(',')
         sep = word.find('|')
         first = word[sep+1:ind]
@@ -74,26 +79,68 @@ def create(pack):
     newprint(dice)
 
 
-list = ["normal",
-        "fighting",
-        "flying",
-        "poison",
-        "ground",
-        "rock",
-        "bug",
-        "ghost",
-        "steel",
-        "fire",
-        "water",
-        "grass",
-        "electric",
-        "psychic",
-        "ice",
-        "dragon",
-        "dark",
-        "fairy"]
+lst = ["normal",
+       "fighting",
+       "flying",
+       "poison",
+       "ground",
+       "rock",
+       "bug",
+       "ghost",
+       "steel",
+       "fire",
+       "water",
+       "grass",
+       "electric",
+       "psychic",
+       "ice",
+       "dragon",
+       "dark",
+       "fairy"]
 
 
 def newprint(dice):
-    for word in list:
+    for word in lst:
         print(dice[word])
+
+
+def tryint(s):
+    try:
+        return int(s)
+    except:
+        return s
+
+
+def alphanum_key(s):
+    """ Turn a string into a list of string and number chunks.
+        "z23a" -> ["z", 23, "a"]
+    """
+    return [tryint(c) for c in re.split('([0-9]+)', s)]
+
+
+def sort_nicely(l):
+    """ Sort the given list in the way that humans expect.
+    """
+    l.sort(key=alphanum_key)
+
+
+def Arrange():
+    folders = glob("./Poke/sprites/*/")
+    print(folders)
+    for folder in folders:
+        _, _, filenames = next(os.walk(folder))
+        typ = re.search(r'([^\\]+)\\$', folder).group(0)[:-1]
+
+        final = f"var {typ}Files ="
+        finish = list(map(lambda x: "/sprites/" + typ +
+                          "/" + x, filenames))
+        sort_nicely(finish)
+
+        # joined_string = ",".join(finish)
+        with open('./Poke/ListsForVariables/' + typ + '.txt', 'w') as f:
+            f.write("%s\n" % finish)
+
+        break
+
+
+Arrange()
