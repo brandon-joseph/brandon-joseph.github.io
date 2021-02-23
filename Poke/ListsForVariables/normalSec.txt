@@ -1,0 +1,1 @@
+var normalFiles2 = ['/sprites/secondary/normalSec/667.png', '/sprites/secondary/normalSec/668.png', '/sprites/secondary/normalSec/694.png', '/sprites/secondary/normalSec/695.png', '/sprites/secondary/normalSec/862.png', '/sprites/secondary/normalSec/876.png']

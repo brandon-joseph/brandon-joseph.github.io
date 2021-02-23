@@ -1,0 +1,1 @@
+var electricFiles2 = ['/sprites/secondary/electricSec/170.png', '/sprites/secondary/electricSec/171.png', '/sprites/secondary/electricSec/595.png', '/sprites/secondary/electricSec/596.png', '/sprites/secondary/electricSec/618.png', '/sprites/secondary/electricSec/644.png', '/sprites/secondary/electricSec/737.png', '/sprites/secondary/electricSec/738.png']

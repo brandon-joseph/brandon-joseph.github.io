@@ -1,0 +1,1 @@
+var bugFiles2 = ['/sprites/secondary/bugSec/347.png', '/sprites/secondary/bugSec/348.png', '/sprites/secondary/bugSec/451.png', '/sprites/secondary/bugSec/751.png', '/sprites/secondary/bugSec/752.png', '/sprites/secondary/bugSec/850.png', '/sprites/secondary/bugSec/851.png', '/sprites/secondary/bugSec/872.png', '/sprites/secondary/bugSec/873.png']

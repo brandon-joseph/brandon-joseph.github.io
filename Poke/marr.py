@@ -2,6 +2,16 @@ import os
 import re
 from glob import glob
 
+import json
+import requests
+import urllib.request as req
+
+baseurl = "https://pokeapi.co/api/v2/pokemon/"
+
+baseurlTypes = "https://pokeapi.co/api/v2/type/"
+
+main = {}
+
 
 def topack(pack):
     lst = [y for y in (x.strip() for x in pack.splitlines()) if y]
@@ -124,7 +134,59 @@ def sort_nicely(l):
     l.sort(key=alphanum_key)
 
 
+def getSprites():
+    """
+    Gets the front sprite for each pokemon
+    """
+
+    for i in range(1, 899):
+        r = requests.get(baseurl + str(i) + "/")
+        res = r.json()
+        img = res['sprites']["front_default"]
+        req.urlretrieve(
+            img, r"C:/Users/bajab/Documents/Projects/Website/brandon-joseph.github.io\/Poke/sprites/" + str(i) + ".png")
+
+
+# getAmounts()
+
+
+def MoveByType():
+    """
+    Move pokemon into proper type folder
+    """
+    for i in range(0, 899):
+        base = r"C:/Users/bajab/Documents/Projects/Website/brandon-joseph.github.io/Poke/sprites/all"
+        end = str(i) + ".png"
+        r = requests.get(baseurl + str(i) + "/")
+        res = r.json()
+        typ = res['types'][0]['type']['name']
+        os.rename(base + end,
+                  base + typ + "/" + end)
+
+
+def MoveByTypeSecondary():
+    """
+    Move pokemon into proper secondary type folder
+    """
+    for i in range(1, 899):
+        base = r"C:/Users/bajab/Documents/Projects/Website/brandon-joseph.github.io/Poke/sprites/all/"
+        dst = r"C:/Users/bajab/Documents/Projects/Website/brandon-joseph.github.io/Poke/sprites/secondary/"
+        end = str(i) + ".png"
+        r = requests.get(baseurl + str(i) + "/")
+        res = r.json()
+        try:
+            typ = res['types'][1]['type']['name'] + "Sec"
+            os.rename(base + end,
+                      dst + typ + "/" + end)
+        except:
+            os.rename(base + end,
+                      dst + "none" + "/" + end)
+
+
 def Arrange():
+    """ 
+    Makes variables for javascript code
+    """
     folders = glob("./Poke/sprites/*/")
     print(folders)
     for folder in folders:
@@ -143,4 +205,27 @@ def Arrange():
         break
 
 
-Arrange()
+def ArrangeSecondary():
+    """ 
+    Makes variables secondary types for javascript code
+    """
+    folders = glob("./Poke/sprites/secondary/*/")
+    print(folders)
+    for folder in folders:
+        _, _, filenames = next(os.walk(folder))
+        typ = re.search(r'([^\\]+)\\$', folder).group(0)[:-1]
+
+        final = f"var {typ[:-3]}Files2 = "
+        finish = list(map(lambda x: "/sprites/secondary/" + typ +
+                          "/" + x, filenames))
+        sort_nicely(finish)
+
+        # joined_string = ",".join(finish)
+        with open('./Poke/ListsForVariables/' + typ + '.txt', 'w') as f:
+            f.write(final + "%s\n" % finish)
+
+
+# MoveByType()
+# MoveByTypeSecondary()
+# Arrange()
+ArrangeSecondary()

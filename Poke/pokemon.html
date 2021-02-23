@@ -36,8 +36,70 @@
 
           $("#refresh-btn").on("click", function refresh() {
             donuts.update(genData);
+            updateTable(allFiles);
           });
         });
+
+        String.prototype.capitalize = function() {
+          return this.charAt(0).toUpperCase() + this.slice(1);
+      }
+
+
+      function combinedSort(a,b) {
+        const regex = /[0-9]+/;
+        var match = regex.exec(a)[0];
+        var match2 = regex.exec(b)[0];
+        return parseInt(match) - parseInt(match2);
+        
+      }
+
+      function genTable(typeFiles) {
+        var table = document.getElementById("imagetable");
+        const regex = /[0-9]+/;
+        let m;
+        const P = new Pokedex.Pokedex();
+        P.getPokemonsList().then(function(response) {
+          var inc = 0;
+          var row = document.getElementById("myRow");
+          typeFiles = typeFiles.sort(combinedSort);
+
+          typeFiles.forEach((element,i) => {
+
+            if ((m = regex.exec(element)) !== null) {
+              m.forEach((match, groupIndex) => {
+        
+        
+            // console.log(i);
+            if (i % 3 == 0 ) {
+              row = table.insertRow(inc);
+              row.id = "myRow" + inc.toString()
+              inc++;
+            } 
+            var x = row.insertCell(-1);
+            var name = response['results'][parseInt(match)-1]['name'].capitalize();
+            x.innerHTML = name;
+            
+            var img = document.createElement('img');
+            img.src = element;
+            img.id = name;
+            x.appendChild(img);
+          });
+          };
+
+          });
+        
+      })
+    }
+
+    function updateTable(typeFiles) {
+      // var new_tbody = document.createElement('tbody');
+      var table = document.getElementById("imagetable").innerHTML = '';;
+      // populate_with_new_rows(new_tbody);
+      // old_tbody.parentNode.replaceChild(new_tbody, table);
+      genTable(typeFiles)
+    }
+
+
 
         function DonutCharts() {
           var charts = d3.select("#donut-charts");
@@ -520,6 +582,7 @@
         }
 
         function genNormal() {
+          updateTable(normalFiles.concat(normalFiles2));
           var type = ["Normal Types"];
           var unit = [""];
           var cat = [
@@ -574,6 +637,7 @@
         }
 
         function genFighting() {
+          updateTable(fightingFiles.concat(fightingFiles2));
           var type = ["Fighting Types"];
           var unit = [""];
           var cat = [
@@ -625,6 +689,7 @@
         }
 
         function genFlying() {
+          updateTable(flyingFiles.concat(flyingFiles2));
           var type = ["Flying Types"];
           var unit = [""];
           var cat = [
@@ -675,6 +740,7 @@
           return dataset;
         }
         function genPoison() {
+          updateTable(poisonFiles.concat(poisonFiles2));
           var type = ["Poison Types"];
           var unit = [""];
           var cat = [
@@ -724,6 +790,7 @@
           return dataset;
         }
         function genGround() {
+          updateTable(groundFiles.concat(groundFiles2));
           var type = ["Ground Types"];
           var unit = [""];
           var cat = [
@@ -773,6 +840,7 @@
           return dataset;
         }
         function genRock() {
+          updateTable(rockFiles.concat(rockFiles2));
           var type = ["Rock Types"];
           var unit = [""];
           var cat = [
@@ -823,6 +891,7 @@
         }
 
         function genBug() {
+          updateTable(bugFiles.concat(bugFiles2));
           var type = ["Bug Types"];
           var unit = [""];
           var cat = [
@@ -873,6 +942,7 @@
         }
 
         function genGhost() {
+          updateTable(ghostFiles.concat(ghostFiles2));
           var type = ["Ghost Types"];
           var unit = [""];
           var cat = [
@@ -923,6 +993,7 @@
         }
 
         function genSteel() {
+          updateTable(steelFiles.concat(steelFiles2));
           var type = ["Steel Types"];
           var unit = [""];
           var cat = [
@@ -973,6 +1044,7 @@
         }
 
         function genFire() {
+          updateTable(fireFiles.concat(fireFiles2));
           var type = ["Fire Types"];
           var unit = [""];
           var cat = [
@@ -1023,6 +1095,7 @@
         }
 
         function genWater() {
+          updateTable(waterFiles.concat(waterFiles2));
           var type = ["Water Types"];
           var unit = [""];
           var cat = [
@@ -1073,6 +1146,7 @@
         }
 
         function genGrass() {
+          updateTable(grassFiles.concat(grassFiles2));
           var type = ["Grass Types"];
           var unit = [""];
           var cat = [
@@ -1123,6 +1197,7 @@
         }
 
         function genElectric() {
+          updateTable(electricFiles.concat(electricFiles2));
           var type = ["ElectricTypes"];
           var unit = [""];
           var cat = [
@@ -1173,6 +1248,7 @@
         }
 
         function genPsychic() {
+          updateTable(psychicFiles.concat(psychicFiles2));
           var type = ["Pyschic Types"];
           var unit = [""];
           var cat = [
@@ -1222,6 +1298,7 @@
           return dataset;
         }
         function genIce() {
+          updateTable(iceFiles.concat(iceFiles2));
           var type = ["Ice Types"];
           var unit = [""];
           var cat = [
@@ -1271,6 +1348,7 @@
           return dataset;
         }
         function genDragon() {
+          updateTable(dragonFiles.concat(dragonFiles2));
           var type = ["Dragon Types"];
           var unit = [""];
           var cat = [
@@ -1321,6 +1399,7 @@
         }
 
         function genDark() {
+          updateTable(darkFiles.concat(darkFiles2));
           var type = ["Dark Types"];
           var unit = [""];
           var cat = [
@@ -1371,6 +1450,7 @@
         }
 
         function genFairy() {
+          updateTable(fairyFiles.concat(fairyFiles2));
           var type = ["Fairy Types"];
           var unit = [""];
           var cat = [
@@ -1427,50 +1507,8 @@
   <!-- <img src=".\sprites\grass\1.png" alt="Bulb" width="50" height="60">
    -->
   <script>
-    var table = document.getElementById("imagetable");
 
-    // console.log(allFiles);
-
-    const regex = /[0-9]+/;
-    let m;
-
-    const P = new Pokedex.Pokedex();
-    P.getPokemonsList().then(function(response) {
-      console.log(response['results'][0])
-   
-      String.prototype.capitalize = function() {
-          return this.charAt(0).toUpperCase() + this.slice(1);
-      }
-
-      var inc = 0;
-      var row = document.getElementById("myRow");
-      allFiles.forEach((element,i) => {
-
-        if ((m = regex.exec(element)) !== null) {
-          m.forEach((match, groupIndex) => {
-    
-    
-        // console.log(i);
-        if (i % 3 == 0 ) {
-          row = table.insertRow(inc);
-          row.id = "myRow"
-          inc++;
-        } 
-
-        console.log(response['results'][parseInt(match)]['name']);
-        var x = row.insertCell(-1);
-        x.innerHTML = response['results'][parseInt(match)-1]['name'].capitalize();
-        var img = document.createElement('img');
-        img.src = element;
-        x.appendChild(img);
-      });
-      };
-
-      });
-    
-  })
-
-
+    genTable(allFiles);
         
 
   </script>
