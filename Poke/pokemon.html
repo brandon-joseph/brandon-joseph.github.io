@@ -28,6 +28,13 @@
       <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
       <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
       <script>
+        const P = new Pokedex.Pokedex();
+        async function pokeByName(name) {
+
+          return await P.getPokemonByName(name)        
+        }
+
+
         $(function () {
           var donutData = genData();
 
@@ -57,7 +64,7 @@
         var table = document.getElementById("imagetable");
         const regex = /[0-9]+/;
         let m;
-        const P = new Pokedex.Pokedex();
+        
         P.getPokemonsList().then(function(response) {
           var inc = 0;
           var row = document.getElementById("myRow");
@@ -75,14 +82,51 @@
               row.id = "myRow" + inc.toString()
               inc++;
             } 
+
+
+            //Use this to get name of variable:
+            //Object.keys({typeFiles})[0]
             var x = row.insertCell(-1);
-            var name = response['results'][parseInt(match)-1]['name'].capitalize();
-            x.innerHTML = name;
+            var name = response['results'][parseInt(match)-1]['name'];
+            
+            if (name  == "fletchling") {
+              var idForTable = ["fire","flying"];
+          
+              idForTable.sort()
+              var res = idForTable.join("");
+              x.id = res;
+              x.classList.add(res);
+              x.innerHTML = name.capitalize();
+
+              var img = document.createElement('img');
+              img.src = element;
+              img.id = name;
+              x.appendChild(img);
+            }
+
+            else {
+
+            P.getPokemonByName(name).then(function(pokemon) {
+            
+            // var pokemon = pokeByName(name);
+            var idForTable = [];
+
+            for (let i = 0; i < pokemon['types'].length; i++) {
+              idForTable.push(pokemon['types'][i]['type']['name']);
+              
+            };
+          
+                            
+            idForTable.sort()
+            x.id = idForTable.join("")
+            x.innerHTML = name.capitalize();
             
             var img = document.createElement('img');
             img.src = element;
             img.id = name;
             x.appendChild(img);
+          });
+        }
           });
           };
 
@@ -326,6 +370,7 @@
             }
           };
 
+          var current;
           var updateDonut = function () {
             //For hover over portion of donut
             var eventObj = {
@@ -415,11 +460,27 @@
                 if (d.data.cat == "Fairy") {
                   charts.selectAll(".donut").data(genFairy());
                 }
+                if (d.data.cat.includes("|")) {
+                  clearCells(current)
+                  var replaceType = d.data.cat.split("|").sort().join("");
+                  var cells = document.querySelectorAll('[id=' + replaceType + ']');
+                  for (let i = 0; i < cells.length; i++) {
+                    cells[i]['bgColor'] = "#FF3"
+                  }
+                  current = replaceType;
+                }
 
                 updateDonut();
               },
               //Important part
             };
+
+            function clearCells(old) {
+              var cells = document.querySelectorAll('[id=' + old + ']');
+              for (let i = 0; i < cells.length; i++) {
+                    cells[i]['bgColor'] = "transparent"
+                  }
+            }
 
             var pie = d3.layout
               .pie()
@@ -1522,7 +1583,7 @@
         //Test
       </script>
     </body>
-    <h1 align="center">Pokemon Type Chart - Beta</h1>
+    <h1 align="center">Pokemon Type Chart - Beta (No alternate forms currently added)</h1>
 
   <!-- <img src=".\sprites\grass\1.png" alt="Bulb" width="50" height="60">
    -->
