@@ -225,7 +225,39 @@ def ArrangeSecondary():
             f.write(final + "%s\n" % finish)
 
 
+def getNames():
+    """
+    Gets the name for each pokemon
+    """
+    names = []
+    final = f"var pokeNames = "
+    for i in range(0, 898):
+        r = requests.get("https://pokeapi.co/api/v2/pokemon/?limit=898")
+        res = r.json()
+        results = res['results']
+        names.append(results[i]['name'])
+    with open('./Poke/ListsForVariables/Pokenames.txt', 'w') as f:
+        f.write(final + "%s\n" % names)
+
+
+def getTypeDictionary():
+    typeDic = {}
+    final = f"var pokeTypesDic = "
+    for i in range(1, 899):
+        r = requests.get(baseurl + str(i) + "/")
+        res = r.json()
+        types = []
+        length = len(res['types'])
+        for i in range(length):
+            types.append(res['types'][i]['type']['name'])
+        typeDic[res['name']] = types
+    with open('./Poke/ListsForVariables/typeDic.txt', 'w') as f:
+        f.write(final + "%s\n" % typeDic)
+
+
 # MoveByType()
 # MoveByTypeSecondary()
 # Arrange()
-ArrangeSecondary()
+# ArrangeSecondary()
+# getNames()
+getTypeDictionary()

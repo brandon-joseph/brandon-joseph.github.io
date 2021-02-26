@@ -65,7 +65,6 @@
         const regex = /[0-9]+/;
         let m;
         
-        P.getPokemonsList().then(function(response) {
           var inc = 0;
           var row = document.getElementById("myRow");
           typeFiles = typeFiles.sort(combinedSort);
@@ -87,52 +86,27 @@
             //Use this to get name of variable:
             //Object.keys({typeFiles})[0]
             var x = row.insertCell(-1);
-            var name = response['results'][parseInt(match)-1]['name'];
-            
-            if (name  == "fletchling") {
-              var idForTable = ["fire","flying"];
+            var name = pokeNames[parseInt(match)-1];
+
+  
+          // var pokemon = pokeByName(name);
+          var idForTable = pokeTypesDic[name]
+        
+                          
+          idForTable.sort()
+          x.id = idForTable.join("")
+          x.innerHTML = name.capitalize();
           
-              idForTable.sort()
-              var res = idForTable.join("");
-              x.id = res;
-              x.classList.add(res);
-              x.innerHTML = name.capitalize();
-
-              var img = document.createElement('img');
-              img.src = element;
-              img.id = name;
-              x.appendChild(img);
-            }
-
-            else {
-
-            P.getPokemonByName(name).then(function(pokemon) {
-            
-            // var pokemon = pokeByName(name);
-            var idForTable = [];
-
-            for (let i = 0; i < pokemon['types'].length; i++) {
-              idForTable.push(pokemon['types'][i]['type']['name']);
-              
-            };
-          
-                            
-            idForTable.sort()
-            x.id = idForTable.join("")
-            x.innerHTML = name.capitalize();
-            
-            var img = document.createElement('img');
-            img.src = element;
-            img.id = name;
-            x.appendChild(img);
-          });
-        }
+          var img = document.createElement('img');
+          img.src = element;
+          img.id = name;
+          x.appendChild(img);
           });
           };
 
           });
         
-      })
+      
     }
 
     function updateTable(typeFiles) {
